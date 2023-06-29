@@ -1,0 +1,13 @@
+springdoc:
+  version: 1.0
+  packages-to-scan: com.project.toyland
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    doc-expansion: none
+  paths-to-match:
+    - /api/v1/**
