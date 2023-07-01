@@ -8,6 +8,8 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 1000
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
