@@ -5,11 +5,9 @@ import com.project.toyland.common.error.code.ErrorCode;
 import com.project.toyland.common.error.exception.ApiException;
 import com.project.toyland.common.error.response.ErrorResponse;
 import com.project.toyland.common.error.response.ErrorResponse.ValidationError;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -17,6 +15,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 전역 예외 처리하는 exception handler
@@ -45,15 +46,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(errorCode);
 	}
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(
-		MethodArgumentNotValidException e,
-		HttpHeaders headers,
-		HttpStatus status,
-		WebRequest request) {
-		log.warn("handleMethodArgumentNotValid", e);
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		log.warn("handleMethodArgumentNotValid", ex);
 		final ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
-		return handleExceptionInternal(e, errorCode);
+		return handleExceptionInternal(ex, errorCode);
 	}
 
 	private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode) {
@@ -66,7 +63,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.body(makeErrorResponse(errorCode, message));
 	}
 
-	private ResponseEntity<ErrorResponse> handleExceptionInternal(BindException e, ErrorCode errorCode) {
+	private ResponseEntity<Object> handleExceptionInternal(BindException e, ErrorCode errorCode) {
 		return ResponseEntity.status(errorCode.getHttpStatus())
 			.body(makeErrorResponse(e, errorCode));
 	}
